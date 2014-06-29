@@ -148,7 +148,8 @@ def localize(path):
     
     for language in languages:  
         for filename in os.listdir(language):
-            # move aside existing files
+<<<<<<< HEAD
+#       move aside existing files
             original = merged = language + os.path.sep + filename
             new = original + '.new'
             old = original + '.old'
@@ -161,10 +162,23 @@ def localize(path):
             if filename.endswith('.strings'):                
                 os.rename(original, old)
 
-        # generate new strings files
+#       generate new strings files
+        os.system('genstrings -q -o "%s" `find . -name "*.m"`' % language)
+
+#       merge and/or convert new files
+=======
+            # move aside existing files
+            if filename.endswith('.strings'):
+                original = language + os.path.sep + filename
+                old = original + '.old'
+                
+                os.rename(original, old)
+
+        # generate new strings fiels
         os.system('genstrings -q -o "%s" `find . -name "*.m"`' % language)
 
         # merge and/or convert new files
+>>>>>>> FETCH_HEAD
         for filename in os.listdir(language):
             if filename.endswith('.strings'):
                 original = merged = language + os.path.sep + filename
