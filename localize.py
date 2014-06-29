@@ -56,9 +56,9 @@ class LocalizedFile():
     def read_from_file(self, fname=None):
         fname = self.fname if fname == None else fname
         try:
-			f = open(fname, encoding='utf-8', mode='r')
-		except UnicodeDecodeError:
-			f = open(fname, encoding='utf-16', mode='r')
+            f = open(fname, encoding='utf-8', mode='r')
+        except UnicodeDecodeError:
+            f = open(fname, encoding='utf-16', mode='r')
         except:
             print 'File %s does not exist.' % fname
             exit(-1)
@@ -91,7 +91,7 @@ class LocalizedFile():
     def save_to_file(self, fname=None):
         fname = self.fname if fname == None else fname
         try:
-			f = open(fname, encoding='utf-8', mode='w')
+            f = open(fname, encoding='utf-8', mode='w')
         except:
             print 'Couldn\'t open file %s.' % fname
             exit(-1)
@@ -119,8 +119,8 @@ def merge(merged_fname, old_fname, new_fname):
     try:
         old = LocalizedFile(old_fname, auto_read=True)
         new = LocalizedFile(new_fname, auto_read=True)
-	except Exception, err:
-		print 'Error: input files have invalid format:', err
+    except Exception, err:
+        print 'Error: input files have invalid format:', err
 
     merged = old.merge_with(new)
 
@@ -147,35 +147,35 @@ def localize(path):
     languages = [name for name in os.listdir(path) if name.endswith('.lproj') and os.path.isdir(name)]
     
     for language in languages:  
-		for filename in os.listdir(language):
-# 		move aside existing files
-			if filename.endswith('.strings'):
-				original = language + os.path.sep + filename
-				old = original + '.old'
-				
-				os.rename(original, old)
+        for filename in os.listdir(language):
+            # move aside existing files
+            if filename.endswith('.strings'):
+                original = language + os.path.sep + filename
+                old = original + '.old'
+                
+                os.rename(original, old)
 
-# 		generate new strings fiels
+        # generate new strings fiels
         os.system('genstrings -q -o "%s" `find . -name "*.m"`' % language)
 
-# 		merge and/or convert new files
-		for filename in os.listdir(language):
-			if filename.endswith('.strings'):
-				original = merged = language + os.path.sep + filename
-				new = original + '.new'
-				old = original + '.old'
+        # merge and/or convert new files
+        for filename in os.listdir(language):
+            if filename.endswith('.strings'):
+                original = merged = language + os.path.sep + filename
+                new = original + '.new'
+                old = original + '.old'
 
-				if os.path.isfile(old):
-					os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (original, new))
-					merge(merged, old, new)
-        		else:
-					os.rename(original, old)
-					os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (old, original))
+                if os.path.isfile(old):
+                    os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (original, new))
+                    merge(merged, old, new)
+                else:
+                    os.rename(original, old)
+                    os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (old, original))
 
-				if os.path.isfile(old):
-					os.remove(old)
-				if os.path.isfile(new):
-					os.remove(new)
+                if os.path.isfile(old):
+                    os.remove(old)
+                if os.path.isfile(new):
+                    os.remove(new)
 
         # also localize xibs, based on TEMPLATE_LANG
         if language != TEMPLATE_LANG:
